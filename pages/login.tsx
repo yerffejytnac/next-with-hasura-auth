@@ -15,16 +15,19 @@ const LoginPage = (props: Props) => {
   const { query } = useRouter();
   const { setItem } = useStorage();
 
+  const callbackUrl = (query.callbackUrl as string) ?? false;
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!email) return;
 
     setItem("email", email);
+    setItem("callbackUrl", callbackUrl);
 
     signIn("email", {
       email,
-      callbackUrl: (query.callbackUrl as string) ?? false,
+      callbackUrl,
     });
   };
 

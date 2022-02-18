@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { GetServerSideProps } from "next";
 
 import { useStorage } from "@hooks";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { OTPInput } from "@components";
 
 const Root = styled.div`
   display: flex;
@@ -42,11 +43,34 @@ const Container = styled.div`
   max-width: 400px;
 
   & h1 {
-    margin-bottom: ${(props) => props.theme.space[2]}px;
+    margin-bottom: ${(props) => props.theme.space[3]}px;
   }
 
   & p {
     margin: 0;
+    margin-bottom: ${(props) => props.theme.space[3]}px;
+    text-align: center;
+    max-width: 80vw;
+
+    & strong {
+      font-weight: ${({ theme }) => theme.fontWeights.medium};
+    }
+  }
+
+  & button {
+    background-color: ${({ theme }) => theme.colors.blue[800]};
+    color: ${({ theme }) => theme.colors.white};
+    border: none;
+    outline: 0;
+    padding: 0.675rem 2.5rem;
+    border-radius: ${({ theme }) => theme.radii[5]};
+    cursor: pointer;
+    font-weight: ${({ theme }) => theme.fontWeights.medium};
+    letter-spacing: 0.02em;
+
+    &:active {
+      background-color: ${({ theme }) => theme.colors.blue[900]};
+    }
   }
 `;
 
@@ -54,11 +78,16 @@ const VerifyRequestPage = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
+  const [callbackUrl, setCallbackUrl] = useState<string | false>(false);
+  const [token, setToken] = useState("");
   const { getItem, removeItem } = useStorage();
 
   useEffect(() => {
     if (!email) {
       setEmail(getItem("email"));
+    }
+    if (!callbackUrl) {
+      setCallbackUrl(getItem("callbackUrl"));
     }
   }, []);
 
@@ -67,18 +96,35 @@ const VerifyRequestPage = () => {
       if (email) {
         removeItem("email");
       }
-      router.push("/profile");
+      if (callbackUrl) {
+        removeItem("callbackUrl");
+      }
+      if (callbackUrl) {
+        router.push(callbackUrl);
+      }
     }
   }, [email, session]);
+
+  const verifyOTPCode = useCallback(() => {
+    window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
+      email
+    )}&token=${token.toUpperCase()}${
+      callbackUrl ? `&callbackUrl=${callbackUrl}` : ""
+    }`;
+  }, [callbackUrl, token, email]);
 
   return (
     <Root>
       <Container>
-        <h1>Verify</h1>
+        <h1>Verify Code</h1>
         <p>
-          We just sent you a magic link to log in or sign up at{" "}
-          <strong>{email}</strong>.{" "}
+          Enter the verification code we emailed to <strong>{email}</strong>{" "}
+          below:
         </p>
+        <OTPInput autoFocus length={6} onChange={(value) => setToken(value)} />
+        <button disabled={!token} onClick={() => verifyOTPCode()}>
+          Log in
+        </button>
       </Container>
     </Root>
   );

@@ -1,4 +1,4 @@
-# next-with-hasura-auth
+# next-with-hasura-auth (OTP)
 
 https://auth.tremendous.dev
 

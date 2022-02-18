@@ -8,6 +8,7 @@ import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { ConnectionOptions } from "typeorm";
 
 import { html, text } from "@lib/email/auth/verificationRequest";
+import { generateVerificationToken } from "@utils";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
@@ -41,13 +42,19 @@ const options: NextAuthOptions = {
         },
       },
       from: process.env.EMAIL_FROM,
-      // Set link expiration to 30 minutes (in seconds)...
-      maxAge: 1800,
+      // Set code expiration to 30 minutes (in seconds)...
+      maxAge: 30 * 60,
+      generateVerificationToken: async () => {
+        const token = await generateVerificationToken();
+        console.log({ token });
+        return token;
+      },
       sendVerificationRequest: async ({
         identifier: email,
-        provider,
         url,
-      }: any) => {
+        token,
+        provider,
+      }) => {
         return new Promise((resolve, reject) => {
           const { server, from } = provider;
           const { host } = new URL(url);
@@ -56,9 +63,9 @@ const options: NextAuthOptions = {
             {
               to: email,
               from,
-              subject: `Confirm your Email`,
-              text: text({ url, host, email }),
-              html: html({ url, host, email }),
+              subject: `Confirm your email`,
+              text: text({ host, token }),
+              html: html({ email, token }),
             },
             (error) => {
               if (error) {
