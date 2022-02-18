@@ -16,6 +16,9 @@
     "noUnusedParameters": true,
     "paths": {
       "@components": ["components"],
+      "@components/*": ["components/*"],
+      "@hooks": ["hooks"],
+      "@lib/*": ["lib/*"],
       "@styles": ["styles"],
       "@types": ["types"],
       "@utils": ["utils"]
