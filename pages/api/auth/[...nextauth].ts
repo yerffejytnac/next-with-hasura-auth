@@ -117,23 +117,17 @@ const options: NextAuthOptions = {
     redirect: async ({ url }) => {
       return Promise.resolve(url);
     },
-    async session({ session, token, user }: any) {
+    async session({ session, token }: any) {
       const encodedToken = jwt.sign(token, secret, {
         algorithm: "HS256",
       });
-
-      console.log("callbacks:session");
-      console.log({ session, token, user });
 
       session.id = token?.sub;
       session.token = encodedToken;
 
       return Promise.resolve(session);
     },
-    async jwt({ token, user, account, profile, isNewUser }) {
-      console.log("callbacks:jwt");
-      console.log({ token, user, account, profile, isNewUser });
-
+    async jwt({ token, user }) {
       if (user) {
         token.sub = user.id;
       }

@@ -1,0 +1,32 @@
+schema:
+  - https://${HASURA_GRAPHQL_API_HOST}/v1/graphql:
+      headers:
+        x-hasura-admin-secret: ${HASURA_GRAPHQL_ADMIN_SECRET}
+        x-hasura-role: "admin"
+documents:
+  - "./lib/graphql/mutations/**/*.graphql"
+  - "./lib/graphql/queries/**/*.graphql"
+  - "./lib/graphql/subscriptions/**/*.graphql"
+watch: true
+overwrite: true
+generates:
+  ./lib/graphql/generated.ts:
+    plugins:
+      - add:
+          content: "import { getFetchParams} from '@lib/graphql';"
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-query"
+    config:
+      fetcher:
+        endpoint: "process.env.NEXT_PUBLIC_API_URL"
+        fetchParams: "await getFetchParams()"
+      exposeFetcher: true
+      exposeQueryKeys: true
+      exposeMutationKeys: true
+    hooks:
+      afterOneFileWrite:
+        - prettier --write
+  ./lib/graphql/schema.json:
+    plugins:
+      - "introspection"

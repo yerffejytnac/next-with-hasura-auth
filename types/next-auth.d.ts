@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import { Session } from "next-auth";
 import { DefaultJWT } from "next-auth/jwt";
 
 interface HasuraClaims {
@@ -6,6 +7,12 @@ interface HasuraClaims {
   "x-hasura-default-role": string;
   "x-hasura-user-id": string;
   "x-hasura-role": string;
+}
+
+declare module "next-auth" {
+  interface Session {
+    id: string;
+  }
 }
 
 declare module "next-auth/jwt" {

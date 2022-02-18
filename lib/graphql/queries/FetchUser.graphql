@@ -1,0 +1,8 @@
+query FetchUser($id: String!) {
+  users_by_pk(id: $id) {
+    email
+    id
+    image
+    name
+  }
+}
