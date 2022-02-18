@@ -44,16 +44,23 @@ type ExtendedColors =
   | "violet"
   | "yellow";
 
+type FontFamilies = "heading" | "body" | "monospace";
+type FontWeights = "light" | "regular" | "medium" | "bold";
+type LineHeights = "body" | "heading";
+
 declare module "styled-components" {
   export interface DefaultTheme {
     breakpoints: {
       [name in Breakpoints]: string;
     };
     colors: Record<ExtendedColors, string>;
-    fonts: Scale<CSS.Property.FontFamily>;
+    fonts: Record<FontFamilies, CSS.Property.FontFamily>;
     fontSizes: Scale<CSS.Property.FontSize<number>>;
-    fontWeights: Scale<CSS.Property.FontWeight>;
-    lineHeights: Scale<CSS.Property.LineHeight<TLengthStyledSystem>>;
+    fontWeights: Record<FontWeights, CSS.Property.FontWeight>;
+    lineHeights: Record<
+      LineHeights,
+      CSS.Property.LineHeight<TLengthStyledSystem>
+    >;
     radii: Scale<CSS.Property.BorderRadius<TLengthStyledSystem>>;
     sizes: Scale<CSS.Property.Height<{}> | CSS.Property.Width<{}>>;
     space: Scale<CSS.Property.Margin<number | string>>;
