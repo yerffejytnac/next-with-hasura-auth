@@ -1,16 +1,21 @@
-import { Session, User } from "next-auth";
-import { JWT } from "next-auth/jwt";
+import NextAuth from "next-auth";
+import { DefaultJWT } from "next-auth/jwt";
 
-declare module "next-auth" {
-  interface Session {
-    id: string;
-    token: string;
-  }
-  interface User {
-    id: string;
-  }
+interface HasuraClaims {
+  "x-hasura-allowed-roles": Array<string>;
+  "x-hasura-default-role": string;
+  "x-hasura-user-id": string;
+  "x-hasura-role": string;
 }
 
 declare module "next-auth/jwt" {
-  interface JWT {}
+  interface JWT extends DefaultJWT {
+    // name?: string | null;
+    // email?: string | null;
+    // picture?: string | null;
+    // sub?: string;
+    iat: string;
+    exp: number;
+    "https://hasura.io/jwt/claims": HasuraClaims;
+  }
 }

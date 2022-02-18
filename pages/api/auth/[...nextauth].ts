@@ -82,16 +82,14 @@ const options: NextAuthOptions = {
     encode: async ({ secret, token }: any) => {
       const jwtClaims = {
         sub: token.sub,
-        name: token.name,
-        email: token.email,
+        iat: Date.now() / 1000,
+        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
         "https://hasura.io/jwt/claims": {
           "x-hasura-allowed-roles": ["user"],
           "x-hasura-default-role": "user",
           "x-hasura-role": "user",
           "x-hasura-user-id": token.sub,
         },
-        iat: Date.now() / 1000,
-        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
       };
 
       const encodedToken = jwt.sign(jwtClaims, secret, { algorithm: "HS256" });
@@ -119,21 +117,25 @@ const options: NextAuthOptions = {
     redirect: async ({ url }) => {
       return Promise.resolve(url);
     },
-    async session({ session, token }: any) {
+    async session({ session, token, user }: any) {
       const encodedToken = jwt.sign(token, secret, {
         algorithm: "HS256",
       });
+
+      console.log("callbacks:session");
+      console.log({ session, token, user });
 
       session.id = token?.sub;
       session.token = encodedToken;
 
       return Promise.resolve(session);
     },
-    async jwt({ token, user }) {
-      const isUserSignedIn = !!user;
+    async jwt({ token, user, account, profile, isNewUser }) {
+      console.log("callbacks:jwt");
+      console.log({ token, user, account, profile, isNewUser });
 
-      if (isUserSignedIn) {
-        token.id = user.id;
+      if (user) {
+        token.sub = user.id;
       }
 
       return Promise.resolve(token);
