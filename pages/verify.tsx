@@ -117,7 +117,6 @@ const VerifyRequestPage = () => {
     <Root>
       <Container>
         <h1>Verify it's you</h1>
-
         <p>
           Enter the verification code we sent to your email{" "}
           <strong>{email}</strong> in the field below.

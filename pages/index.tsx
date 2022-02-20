@@ -8,7 +8,7 @@ const IndexPage = () => {
 
   return (
     <div>
-      <h1>Auth</h1>
+      <h1>App</h1>
       <button
         onClick={() =>
           !session ? signIn(undefined, { callbackUrl: "/profile" }) : signOut()

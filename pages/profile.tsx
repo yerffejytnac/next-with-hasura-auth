@@ -102,7 +102,8 @@ const ProfilePage = () => {
   if (!session) {
     return (
       <div>
-        <h1>Access Denied</h1>
+        <h1>Profile</h1>
+        <p>You need to be signed in to view this page.</p>
         <button onClick={() => signIn()}>Sign in</button>
       </div>
     );
