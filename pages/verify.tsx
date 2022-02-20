@@ -116,14 +116,15 @@ const VerifyRequestPage = () => {
   return (
     <Root>
       <Container>
-        <h1>Verify Code</h1>
+        <h1>Verify it's you</h1>
+
         <p>
-          Enter the verification code we emailed to <strong>{email}</strong>{" "}
-          below:
+          Enter the verification code we sent to your email{" "}
+          <strong>{email}</strong> in the field below.
         </p>
         <OTPInput autoFocus length={6} onChange={(value) => setToken(value)} />
         <button disabled={!token} onClick={() => verifyOTPCode()}>
-          Log in
+          Verify Code
         </button>
       </Container>
     </Root>

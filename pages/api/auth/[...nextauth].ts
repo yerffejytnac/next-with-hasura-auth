@@ -41,14 +41,10 @@ const options: NextAuthOptions = {
           rejectUnauthorized: false,
         },
       },
-      from: process.env.EMAIL_FROM,
+      from: `App <${process.env.EMAIL_FROM}>`,
       // Set code expiration to 30 minutes (in seconds)...
       maxAge: 30 * 60,
-      generateVerificationToken: async () => {
-        const token = await generateVerificationToken();
-        console.log({ token });
-        return token;
-      },
+      generateVerificationToken: async () => await generateVerificationToken(),
       sendVerificationRequest: async ({
         identifier: email,
         url,
@@ -63,7 +59,7 @@ const options: NextAuthOptions = {
             {
               to: email,
               from,
-              subject: `Confirm your email`,
+              subject: `Your App verification code`,
               text: text({ host, token }),
               html: html({ email, token }),
             },
