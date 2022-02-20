@@ -40,7 +40,7 @@ const options: NextAuthOptions = {
           rejectUnauthorized: false,
         },
       },
-      from: process.env.EMAIL_FROM,
+      from: `App <${process.env.EMAIL_FROM}>`,
       // Set link expiration to 30 minutes (in seconds)...
       maxAge: 1800,
       sendVerificationRequest: async ({
@@ -56,7 +56,7 @@ const options: NextAuthOptions = {
             {
               to: email,
               from,
-              subject: `Confirm your Email`,
+              subject: `Your App sign in link`,
               text: text({ url, host, email }),
               html: html({ url, host, email }),
             },

@@ -42,11 +42,18 @@ const Container = styled.div`
   max-width: 400px;
 
   & h1 {
-    margin-bottom: ${(props) => props.theme.space[2]}px;
+    margin-bottom: ${(props) => props.theme.space[3]}px;
   }
 
   & p {
     margin: 0;
+    margin-bottom: ${(props) => props.theme.space[3]}px;
+    text-align: center;
+    max-width: 80vw;
+
+    & strong {
+      font-weight: ${({ theme }) => theme.fontWeights.medium};
+    }
   }
 `;
 
@@ -74,10 +81,10 @@ const VerifyRequestPage = () => {
   return (
     <Root>
       <Container>
-        <h1>Verify</h1>
+        <h1>Verify it's you</h1>
         <p>
-          We just sent you a magic link to log in or sign up at{" "}
-          <strong>{email}</strong>.{" "}
+          Click on the sign in link we sent to your email{" "}
+          <strong>{email}</strong> to finish logging in.
         </p>
       </Container>
     </Root>
