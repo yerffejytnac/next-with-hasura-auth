@@ -1,8 +1,10 @@
-import { useFetchUserQuery, Users, useUpdateUserMutation } from "@lib/graphql";
+import { useS3Upload } from "next-s3-upload";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
 import styled from "styled-components";
+
+import { useFetchUserQuery, Users, useUpdateUserMutation } from "@lib/graphql";
 
 const DebugContainer = styled.div`
   display: grid;
@@ -43,6 +45,14 @@ const Profile = ({ id }: { id: string }) => {
 
   return (
     <div>
+      {data && (
+        <div>
+          <h1>{data.name ?? "Profile"}</h1>
+          {data.image && (
+            <img src={data.image} alt={`${data.name}`} width="88" height="88" />
+          )}
+        </div>
+      )}
       <pre children={JSON.stringify({ isFetching, data, error }, null, 2)} />
       {!isLoading && data && <EditProfile profile={data} />}
     </div>
@@ -51,16 +61,23 @@ const Profile = ({ id }: { id: string }) => {
 
 const EditProfile = ({ profile }: { profile: Users }) => {
   const [name, setName] = useState(profile.name ?? "");
+  let [image, setImage] = useState(profile.image ?? "");
+  let { FileInput, openFileDialog, uploadToS3 } = useS3Upload();
   const { isLoading, mutate, isSuccess } = useUpdateUserMutation();
   const queryClient = useQueryClient();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+  };
+
+  const handleFileChange = async (file: any) => {
+    let { url } = await uploadToS3(file);
+    setImage(url);
   };
 
   const handleClick = () => {
     mutate(
-      { id: profile.id, name },
+      { id: profile.id, name, image },
       {
         onSuccess: (data, variables) => {
           queryClient.setQueryData(["UpdateUser", { id: variables.id }], data);
@@ -74,12 +91,23 @@ const EditProfile = ({ profile }: { profile: Users }) => {
 
   return (
     <div>
-      <input type="text" value={name} onChange={(e) => handleChange(e)} />
-      <button onClick={() => handleClick()}>Update Profile</button>
+      <h3>Edit Profile</h3>
+      <div>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => handleInputChange(e)}
+        />
+        <FileInput onChange={handleFileChange} />
+        <button onClick={openFileDialog}>Upload Image</button>
+      </div>
+
+      <button onClick={() => handleClick()}>Save</button>
       <pre
         children={JSON.stringify(
           {
             name,
+            image,
             isLoading,
             isSuccess,
           },
@@ -112,7 +140,6 @@ const ProfilePage = () => {
   // If session exists, display content
   return (
     <div>
-      <h1>Profile</h1>
       <button onClick={() => signOut()}>Log out</button>
       <Profile id={session.id} />
       <DebugContainer>

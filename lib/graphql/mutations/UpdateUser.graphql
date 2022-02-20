@@ -1,8 +1,11 @@
-mutation UpdateUser($id: String!, $name: String) {
-  update_users(where: { id: { _eq: $id } }, _set: { name: $name }) {
-    returning {
-      id
-      name
-    }
+mutation UpdateUser($id: String!, $name: String, $image: String) {
+  update_users_by_pk(
+    pk_columns: { id: $id }
+    _set: { name: $name, image: $image }
+  ) {
+    id
+    email
+    image
+    name
   }
 }

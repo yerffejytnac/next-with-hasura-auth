@@ -21,5 +21,10 @@ namespace NodeJS {
 
     NEXTAUTH_SECRET: string;
     NEXTAUTH_URL: string;
+
+    S3_UPLOAD_KEY: string;
+    S3_UPLOAD_SECRET: string;
+    S3_UPLOAD_BUCKET: string;
+    S3_UPLOAD_REGION: string;
   }
 }

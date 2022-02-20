@@ -1798,17 +1798,17 @@ export type Verification_Tokens_Variance_Order_By = {
 export type UpdateUserMutationVariables = Exact<{
   id: Scalars["String"];
   name?: InputMaybe<Scalars["String"]>;
+  image?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type UpdateUserMutation = {
   __typename?: "mutation_root";
-  update_users?: {
-    __typename?: "users_mutation_response";
-    returning: Array<{
-      __typename?: "users";
-      id: string;
-      name?: string | null;
-    }>;
+  update_users_by_pk?: {
+    __typename?: "users";
+    id: string;
+    email?: string | null;
+    image?: string | null;
+    name?: string | null;
   } | null;
 };
 
@@ -1828,12 +1828,12 @@ export type FetchUserQuery = {
 };
 
 export const UpdateUserDocument = `
-    mutation UpdateUser($id: String!, $name: String) {
-  update_users(where: {id: {_eq: $id}}, _set: {name: $name}) {
-    returning {
-      id
-      name
-    }
+    mutation UpdateUser($id: String!, $name: String, $image: String) {
+  update_users_by_pk(pk_columns: {id: $id}, _set: {name: $name, image: $image}) {
+    id
+    email
+    image
+    name
   }
 }
     `;
